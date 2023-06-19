@@ -89,7 +89,9 @@ const logout = asyncHandler(async (req, res) => {
         httpOnly: true,
         secure: true,
     });
-    res.sendStatus(204); // forbidden
+    res.json({
+        message: "Logged out successfully",
+    })
 })
 
 // Fetch all users
