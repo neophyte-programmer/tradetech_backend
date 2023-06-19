@@ -2,7 +2,7 @@ const { generateToken } = require('../config/jwtToken');
 const User = require('../models/userModel');
 const asyncHandler = require('express-async-handler');
 
-// Register Controller
+// Register user
 const createUser = asyncHandler(async (req, res) => {
     // get the email from the request body
     const email = req.body.email;
@@ -17,7 +17,7 @@ const createUser = asyncHandler(async (req, res) => {
     }
 })
 
-// Login Controller
+// Login user
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     // find the user with the email
@@ -59,7 +59,7 @@ const getSingleUser = asyncHandler(async (req, res) => {
 })
 
 // Delete a user
-const deleteUser = asyncHandler(async (req, res) => { 
+const deleteUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
     try {
         const singleUser = await User.findByIdAndDelete(id)
@@ -71,7 +71,18 @@ const deleteUser = asyncHandler(async (req, res) => {
 
 // Update a user
 const updateUser = asyncHandler(async (req, res) => {
-
+    const { id } = req.params;
+    try {
+        const updatedUser = await User.findByIdAndUpdate(id, {
+            firstname: req?.body?.firstname,
+            lastname: req?.body?.lastname,
+            email: req?.body?.email,
+            mobile: req?.body?.mobile,
+        }, { new: true })
+        res.json(updatedUser)
+    } catch (error) {
+        throw new Error(error)
+    }
 })
 
 
