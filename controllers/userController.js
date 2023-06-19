@@ -18,7 +18,14 @@ const createUser = asyncHandler(async (req, res) => {
 // Login Controller
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    console.log(email, password)
+    // find the user with the email
+    const findUser = await User.findOne({ email: email })
+    
+    if (findUser && await findUser.isPasswordMatched(password)) {
+        res.json(findUser)
+    } else {
+        throw new Error('Invalid email or password')
+    }
 })
 
 module.exports = {
