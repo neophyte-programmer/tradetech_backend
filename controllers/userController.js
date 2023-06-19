@@ -63,7 +63,9 @@ const deleteUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
     try {
         const singleUser = await User.findByIdAndDelete(id)
-        res.json("User deleted successfully")
+        res.json({
+            message: "User deleted successfully",
+        })
     } catch (error) {
         throw new Error(error)
     }
@@ -80,7 +82,43 @@ const updateUser = asyncHandler(async (req, res) => {
             mobile: req?.body?.mobile,
         }, { new: true })
         res.json(updatedUser)
+
     } catch (error) {
+        throw new Error(error)
+    }
+})
+
+// Block a user
+const blockUser = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    try {
+        const blockedUser = await User.findByIdAndUpdate(id, {
+            isBlocked: true
+        }, {
+            new: true
+        })
+        res.json({
+            message: "User blocked successfully",
+        })
+    } catch (error) { 
+        throw new Error(error)
+    }
+})
+
+
+// Unblock a user
+const unblockUser = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    try {
+        const unblockedUser = await User.findByIdAndUpdate(id, {
+            isBlocked: false
+        }, {
+            new: true
+        })
+        res.json({
+            message: "User unblocked successfully",
+        })
+    } catch (error) { 
         throw new Error(error)
     }
 })
@@ -88,5 +126,5 @@ const updateUser = asyncHandler(async (req, res) => {
 
 
 module.exports = {
-    createUser, loginUser, getAllUsers, getSingleUser, updateUser, deleteUser
+    createUser, loginUser, getAllUsers, getSingleUser, updateUser, deleteUser, blockUser, unblockUser
 }
