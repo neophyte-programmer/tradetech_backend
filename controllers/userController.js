@@ -15,6 +15,12 @@ const createUser = asyncHandler(async (req, res) => {
     }
 })
 
+// Login Controller
+const loginUser = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    console.log(email, password)
+})
+
 module.exports = {
-    createUser
+    createUser, loginUser
 }
