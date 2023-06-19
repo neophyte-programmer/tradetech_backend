@@ -49,7 +49,13 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
 // Fetch a single user
 const getSingleUser = asyncHandler(async (req, res) => {
-
+    const { id } = req.params;
+    try {
+        const singleUser = await User.findById(id)
+        res.json(singleUser)
+    } catch (error) {
+        throw new Error(error)
+    }
 })
 
 // Update a user
