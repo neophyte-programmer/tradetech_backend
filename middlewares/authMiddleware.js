@@ -23,4 +23,14 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
     }
 })
 
-module.exports = { authMiddleware };
+const isAdmin = asyncHandler(async (req, res, next) => { 
+    const { email } = req.user
+    const adminUser = await User.findOne({ email })
+    if (adminUser.role === "admin") { 
+        next()
+    } else {
+        throw new Error("You are not authorized to access this route")
+    }
+})
+
+module.exports = { authMiddleware, isAdmin };

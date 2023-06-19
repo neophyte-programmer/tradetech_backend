@@ -1,6 +1,6 @@
 const express = require('express');
 const { createUser, loginUser, getAllUsers, getSingleUser, deleteUser, updateUser } = require('../controllers/userController');
-const { authMiddleware } = require('../middlewares/authMiddleware');
+const { authMiddleware, isAdmin } = require('../middlewares/authMiddleware');
 const router = express.Router();
 
 // /api/user
@@ -8,8 +8,8 @@ const router = express.Router();
 router.post('/register', createUser)
 router.post('/login', loginUser)
 router.get('/all', getAllUsers)
-router.get("/:id", authMiddleware, getSingleUser)
+router.get("/:id", authMiddleware, isAdmin, getSingleUser)
 router.delete("/:id", deleteUser)
-router.put("/:id", updateUser)
+router.put("/edit", authMiddleware, updateUser)
 
 module.exports = router;
