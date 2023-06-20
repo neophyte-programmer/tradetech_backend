@@ -24,7 +24,7 @@ const createProduct = asyncHandler(async (req, res) => {
 
 // update a product
 const updateProduct = asyncHandler(async (req, res) => {
-    const {id}  = req.params;
+    const { id } = req.params;
     try {
         if (req.body.title) {
             req.body.slug = slugify(req.body.title, {
@@ -43,9 +43,9 @@ const updateProduct = asyncHandler(async (req, res) => {
 
 // delete a product
 const deleteProduct = asyncHandler(async (req, res) => {
-    const {id}  = req.params;
+    const { id } = req.params;
     try {
-       
+
         const deletedProduct = await Product.findByIdAndDelete(id)
         res.json({
             message: "Product deleted successfully",
@@ -53,7 +53,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
     } catch (error) {
         throw new Error(error)
     }
- })
+})
 
 // get a single product
 const getSingleProduct = asyncHandler(async (req, res) => {
@@ -69,8 +69,18 @@ const getSingleProduct = asyncHandler(async (req, res) => {
 // get all products
 const getAllProducts = asyncHandler(async (req, res) => {
     try {
-        const getProducts = await Product.find()
-        res.json(getProducts)
+        // Filtering 
+        const queryObject = { ...req.query };
+        const excludeFields = ['page', 'sort', 'limit', 'fields']; // exclude these fields from query
+        excludeFields.forEach(el => delete queryObject[el]); // delete these fields from query
+
+        let queryStr = JSON.stringify(queryObject);
+        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+
+        let query = Product.find(JSON.parse(queryStr));
+
+        const products = await query
+        res.json(products)
     } catch (error) {
         throw new Error(error)
     }

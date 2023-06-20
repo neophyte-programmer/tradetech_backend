@@ -10,7 +10,7 @@ const router = express.Router();
 router.post('/create', authMiddleware, isAdmin, createProduct)
 
 // GET
-router.get("/all", getAllProducts)
+router.get("/", getAllProducts)
 router.get("/:id", getSingleProduct)
 
 // DELETE
