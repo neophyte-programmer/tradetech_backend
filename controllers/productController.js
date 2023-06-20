@@ -14,8 +14,6 @@ const createProduct = asyncHandler(async (req, res) => {
     } catch (error) {
         throw new Error(error)
     }
-
-    
 })
 
 // update a product
@@ -25,10 +23,20 @@ const updateProduct = asyncHandler(async (req, res) => { })
 const deleteProduct = asyncHandler(async (req, res) => { })
 
 // get a single product
-const getSingleProduct = asyncHandler(async (req, res) => { })
+const getSingleProduct = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    try {
+        const findProduct = await Product.findById(id)
+        res.json(findProduct)
+    } catch (error) {
+        throw new Error(error)
+    }
+})
 
 // get all products
-const getAllProducts = asyncHandler(async (req, res) => { })
+const getAllProducts = asyncHandler(async (req, res) => {
+
+})
 
 // add product to wishlist
 const addToWishlist = asyncHandler(async (req, res) => { })

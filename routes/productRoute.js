@@ -9,7 +9,8 @@ const router = express.Router();
 router.post('/create', createProduct)
 
 // GET
-
+router.get("/all", getAllProducts)
+router.get("/:id", getSingleProduct)
 
 // DELETE
 
