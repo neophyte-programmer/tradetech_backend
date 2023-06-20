@@ -13,8 +13,10 @@ router.get("/all", getAllProducts)
 router.get("/:id", getSingleProduct)
 
 // DELETE
+router.delete("/drop/:id", deleteProduct)
 
 
 // PUT
+router.put("/edit/:id", updateProduct)
 
 module.exports = router;

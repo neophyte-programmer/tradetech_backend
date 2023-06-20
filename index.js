@@ -1,12 +1,13 @@
 const express = require('express')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
+const dotenv = require('dotenv').config()
+const morgan = require('morgan')
 
 const dbConnect = require('./config/dbConnect')
 const { notFound, errorHandler } = require('./middlewares/errorHandler')
 
 const app = express()
-const dotenv = require('dotenv').config()
 const PORT = process.env.PORT || 4000
 
 // ROUTERS
@@ -18,6 +19,7 @@ const productRouter = require('./routes/productRoute')
 dbConnect() // Connecting to the database
 
 
+app.use(morgan("dev")) // Logging incoming requests
 app.use(bodyParser.json()) // Parsing incoming JSON data
 app.use(bodyParser.urlencoded({ extended: false })); // Parsing incoming form data
 app.use(cookieParser())
