@@ -1,12 +1,19 @@
 const express = require('express')
+const cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser')
+
 const dbConnect = require('./config/dbConnect')
+const { notFound, errorHandler } = require('./middlewares/errorHandler')
+
 const app = express()
 const dotenv = require('dotenv').config()
 const PORT = process.env.PORT || 4000
+
+// ROUTERS
 const authRouter = require('./routes/authRoute')
-const bodyParser = require('body-parser')
-const { notFound, errorHandler } = require('./middlewares/errorHandler')
-const cookieParser = require('cookie-parser')
+const productRouter = require('./routes/productRoute')
+
+
 
 dbConnect() // Connecting to the database
 
@@ -17,6 +24,7 @@ app.use(cookieParser())
 
 // ROUTES
 app.use('/api/user', authRouter) // Registering the authentication router at the specified route
+app.use('/api/product', productRouter)
 
 
 // MIDDLEWARES - always after routes
