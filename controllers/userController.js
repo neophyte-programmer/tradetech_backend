@@ -82,7 +82,7 @@ const logout = asyncHandler(async (req, res) => {
         return res.sendStatus(204); // forbidden
     }
     // console.log(cookie);
-    await User.findOneAndUpdate({refreshToken}, {
+    await User.findOneAndUpdate({ refreshToken }, {
         refreshToken: "",
     });
     res.clearCookie("refreshToken", {
@@ -189,8 +189,30 @@ const unblockUser = asyncHandler(async (req, res) => {
     }
 })
 
+// Update password
+const updatePassword = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    const password = req.body.password;
+    validateMongodbId(_id)
+
+    const user = await User.findById(_id);
+
+    if (password) {
+        user.password = password;
+        const updatedPassword = await user.save()
+
+        res.json({
+            message: "Password updated successfully",
+        })
+    } else {
+        res.json({
+            message: "Password could not be updated",
+        })
+    }
+})
+
 
 
 module.exports = {
-    createUser, loginUser, getAllUsers, getSingleUser, updateUser, deleteUser, blockUser, unblockUser, handleRefreshToken, logout
+    createUser, loginUser, getAllUsers, getSingleUser, updateUser, deleteUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword
 }

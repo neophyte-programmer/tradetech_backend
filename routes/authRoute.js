@@ -1,5 +1,17 @@
 const express = require('express');
-const { createUser, loginUser, getAllUsers, getSingleUser, deleteUser, updateUser, blockUser, unblockUser, handleRefreshToken, logout } = require('../controllers/userController');
+const {
+    createUser,
+    loginUser,
+    getAllUsers,
+    getSingleUser,
+    deleteUser,
+    updateUser,
+    blockUser,
+    unblockUser,
+    handleRefreshToken,
+    logout,
+    updatePassword
+} = require('../controllers/userController');
 const { authMiddleware, isAdmin } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
@@ -21,6 +33,7 @@ router.delete("/:id", deleteUser)
 
 
 // PUT
+router.put("/password", authMiddleware, updatePassword)
 router.put("/edit", authMiddleware, updateUser)
 router.put("/block/:id", authMiddleware, isAdmin, blockUser)
 router.put("/unblock/:id", authMiddleware, isAdmin, unblockUser)
