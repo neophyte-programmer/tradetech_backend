@@ -1,10 +1,12 @@
 const User = require('../models/userModel');
 const jwt = require("jsonwebtoken");
+const crypto = require('crypto');
 
 const { generateToken } = require('../config/jwtToken');
 const asyncHandler = require('express-async-handler');
 const validateMongodbId = require('../utils/validateMongodbId');
 const { generateRefreshToken } = require('../config/refreshToken');
+const sendEmail = require('./emailController');
 
 // Register user
 const createUser = asyncHandler(async (req, res) => {
@@ -211,8 +213,60 @@ const updatePassword = asyncHandler(async (req, res) => {
     }
 })
 
+const generateForgotPasswordToken = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+    const user = await User.findOne({ email: email })
+    if (!user) throw new Error("User not found");
+    try {
+        const token = await user.createPasswordResetToken()
+        await user.save()
+        const resetURL = `
+            Hey there! You requested to change your password for TradeTech. If you didnt request for this email, kindly ignore. Otherwise, follow this link to reset your password for TradeTech. This link is valid for 10 minutes from now.
+            <a href="http://localhost:5000/api/user/reset-password/${token}"> Click here </a>
+        `
+        const data = {
+            to: email,
+            text: "Hey TradeTech User",
+            subject: "TradeTech Forgot Password Link",
+            html: resetURL,
+        }
+        sendEmail(data)
+        res.json({
+            message: "Your request was successful",
+            token: token
+        })
+    } catch (error) {
+        throw new Error(error)
+    }
+})
+
+
+// Reset your password
+const resetPassword = asyncHandler(async (req, res) => { 
+    const { password } = req.body
+    const { token } = req.params
+
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex')
+    // find user using the token
+    const user = await User.findOne({
+        passwordResetToken: hashedToken,
+        passwordResetExpires: { $gt: Date.now()}
+    })
+
+    if (!user) throw new Error("Your token has expired. Please try again")
+    user.password = password
+    user.passwordResetToken = undefined
+    user.passwordResetExpires = undefined
+
+    await user.save()
+
+    res.json({
+        message: "Your password has been reset successfully"
+    })
+})
+
 
 
 module.exports = {
-    createUser, loginUser, getAllUsers, getSingleUser, updateUser, deleteUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword
+    createUser, loginUser, getAllUsers, getSingleUser, updateUser, deleteUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword, generateForgotPasswordToken, resetPassword
 }
