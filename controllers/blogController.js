@@ -34,6 +34,13 @@ const getBlog = asyncHandler(async (req, res) => {
     try {
         const { id } = req.params 
         const singleBlog = await Blog.findById(id)
+        const updateViews = await Blog.findByIdAndUpdate(
+            id,
+            {
+              $inc: { numViews: 1 },
+            },
+            { new: true }
+          );
         res.status(200).json({
             data: singleBlog
         })
