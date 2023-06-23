@@ -31,9 +31,10 @@ const updateBlog = asyncHandler(async (req, res) => {
 })
 
 const getBlog = asyncHandler(async (req, res) => {
+    const { id } = req.params 
     try {
-        const { id } = req.params 
         const singleBlog = await Blog.findById(id)
+        // when user gets a blog, increment the number of views
         const updateViews = await Blog.findByIdAndUpdate(
             id,
             {
@@ -59,8 +60,13 @@ const getAllBlogs = asyncHandler(async (req, res) => {
 })
 
 const deleteBlog = asyncHandler(async (req, res) => {
+    const { id } = req.params 
     try {
-        
+        const deletedBlog = await Blog.findByIdAndDelete(id)
+        res.status(200).json({
+            message: "Blog deleted successfully",
+            data: deletedBlog,
+        })
     } catch (error) {
         throw new Error(error)
     }
