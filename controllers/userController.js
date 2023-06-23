@@ -16,7 +16,7 @@ const createUser = asyncHandler(async (req, res) => {
     if (!findUser) {
         // create a new user
         const newUser = await User.create(req.body)
-        res.json(newUser)
+        res.json({data: newUser})
     } else {
         // user already exists
         throw new Error('User already exists')
@@ -66,7 +66,7 @@ const handleRefreshToken = asyncHandler(async (req, res) => {
             throw new Error("There is something wrong with refresh token");
         }
         const accessToken = generateToken(user?._id);
-        res.json({ accessToken });
+        res.json({ data: accessToken });
     });
 })
 
@@ -100,7 +100,7 @@ const logout = asyncHandler(async (req, res) => {
 const getAllUsers = asyncHandler(async (req, res) => {
     try {
         const getUsers = await User.find()
-        res.json(getUsers)
+        res.json({data: getUsers})
     } catch (error) {
         throw new Error(error)
     }
@@ -113,7 +113,7 @@ const getSingleUser = asyncHandler(async (req, res) => {
 
     try {
         const singleUser = await User.findById(id)
-        res.json(singleUser)
+        res.json({data: singleUser})
     } catch (error) {
         throw new Error(error)
     }
@@ -145,7 +145,7 @@ const updateUser = asyncHandler(async (req, res) => {
             email: req?.body?.email,
             mobile: req?.body?.mobile,
         }, { new: true })
-        res.json(updatedUser)
+        res.json({data: updatedUser})
 
     } catch (error) {
         throw new Error(error)
@@ -233,7 +233,7 @@ const generateForgotPasswordToken = asyncHandler(async (req, res) => {
         sendEmail(data)
         res.json({
             message: "Your request was successful",
-            token: token
+            data: token
         })
     } catch (error) {
         throw new Error(error)

@@ -15,7 +15,7 @@ const createProduct = asyncHandler(async (req, res) => {
         const newProduct = await Product.create(req.body)
         res.json({
             message: "Product created successfully",
-            product: newProduct
+            data: newProduct
         })
     } catch (error) {
         throw new Error(error)
@@ -34,7 +34,7 @@ const updateProduct = asyncHandler(async (req, res) => {
         const updatedProduct = await Product.findByIdAndUpdate(id, req.body, { new: true })
         res.json({
             message: "Product updated successfully",
-            product: updatedProduct
+            data: updatedProduct
         })
     } catch (error) {
         throw new Error(error)
@@ -105,10 +105,10 @@ const getAllProducts = asyncHandler(async (req, res) => {
         if (req.query.page) {
             const productCount = await Product.countDocuments();
             if (skip >= productCount) throw new Error("This Page does not exists");
-          }
+        }
 
         const products = await query
-        res.json(products)
+        res.json({ data: products })
     } catch (error) {
         throw new Error(error)
     }
