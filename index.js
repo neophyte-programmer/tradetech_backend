@@ -13,6 +13,7 @@ const PORT = process.env.PORT || 4000
 // ROUTERS
 const authRouter = require('./routes/authRoute')
 const productRouter = require('./routes/productRoute')
+const blogRouter = require('./routes/blogRoute')
 
 
 
@@ -27,6 +28,7 @@ app.use(cookieParser())
 // ROUTES
 app.use('/api/user', authRouter) // Registering the authentication router at the specified route
 app.use('/api/product', productRouter)
+app.use('/api/blog', blogRouter)
 
 
 // MIDDLEWARES - always after routes
