@@ -36,7 +36,7 @@ const getBlog = asyncHandler(async (req, res) => {
     validateMongodbId(id)
     try {
         const singleBlog = await Blog.findById(id)
-        if(!singleBlog) throw new Error("Blog not found")
+        if (!singleBlog) throw new Error("Blog not found")
         // when user gets a blog, increment the number of views
         const updateViews = await Blog.findByIdAndUpdate(
             id,
@@ -56,7 +56,7 @@ const getBlog = asyncHandler(async (req, res) => {
 const getAllBlogs = asyncHandler(async (req, res) => {
     try {
         const allBlogs = await Blog.find()
-        
+
         res.status(200).json({ data: allBlogs })
     } catch (error) {
         throw new Error(error)
@@ -132,7 +132,53 @@ const likeBlog = asyncHandler(async (req, res) => {
 })
 
 const dislikeBlog = asyncHandler(async (req, res) => {
+    const { blogId } = req.body
+    validateMongodbId(blogId)
+
     try {
+        // find blog to be disliked
+        const blog = await Blog.findById(blogId)
+        // find user who is disliking the blog
+        const loginUserId = req?.user?._id
+
+        // if user has disliked post
+        const isDisliked = blog?.isDisliked
+
+        // if user has disliked post
+        const isAlreadyLiked = blog?.likes?.find((userId) => userId?.toString() === loginUserId?.toString())
+
+        if (isAlreadyLiked) {
+            const updatedBlog = await Blog.findByIdAndUpdate(blogId, {
+                $pull: { likes: loginUserId },
+                isLiked: false
+            }, {
+                new: true
+            })
+            res.status(200).json({
+                data: updatedBlog,
+            })
+        }
+        if (isDisliked) {
+            const updatedBlog = await Blog.findByIdAndUpdate(blogId, {
+                $pull: { dislikes: loginUserId },
+                isDisliked: false
+            }, {
+                new: true
+            })
+            res.status(200).json({
+                data: updatedBlog,
+            })
+        } else {
+            const updatedBlog = await Blog.findByIdAndUpdate(blogId, {
+                $push: { dislikes: loginUserId },
+                isDisiked: true
+            }, {
+                new: true
+            })
+            res.status(200).json({
+                data: updatedBlog,
+            })
+        }
 
     } catch (error) {
         throw new Error(error)
