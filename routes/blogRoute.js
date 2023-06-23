@@ -12,15 +12,18 @@ router.post("/new", authMiddleware, isAdmin, createBlog)
 
 // GET
 router.get("/all",  getAllBlogs)
-router.get("/:id", authMiddleware, isAdmin, getBlog)
+router.get("/:id",  getBlog)
 
 
 // DELETE
-router.delete("/drop/:id", deleteBlog)
+router.delete("/drop/:id", authMiddleware, isAdmin, deleteBlog)
 
 
 // PUT
 router.put("/edit/:id", authMiddleware, isAdmin, updateBlog)
+router.put("/likes", authMiddleware, likeBlog);
+router.put("/dislikes", authMiddleware, dislikeBlog);
+
 
 
 
