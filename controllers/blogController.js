@@ -35,7 +35,7 @@ const getBlog = asyncHandler(async (req, res) => {
     const { id } = req.params
     validateMongodbId(id)
     try {
-        const singleBlog = await Blog.findById(id)
+        const singleBlog = await Blog.findById(id).populate("likes").populate("dislikes")
         if (!singleBlog) throw new Error("Blog not found")
         // when user gets a blog, increment the number of views
         const updateViews = await Blog.findByIdAndUpdate(
