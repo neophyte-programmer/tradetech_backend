@@ -15,6 +15,7 @@ const authRouter = require('./routes/authRoute')
 const productRouter = require('./routes/productRoute')
 const blogRouter = require('./routes/blogRoute')
 const productCategoryRouter = require('./routes/productCategoryRoute')
+const blogCategoryRouter = require('./routes/blogCategoryRoute')
 
 
 dbConnect() // Connecting to the database
@@ -30,6 +31,7 @@ app.use('/api/user', authRouter) // Registering the authentication router at the
 app.use('/api/product', productRouter)
 app.use('/api/blog', blogRouter)
 app.use('/api/productCategory', productCategoryRouter)
+app.use('/api/blogCategory', blogCategoryRouter)
 
 
 // MIDDLEWARES - always after routes
