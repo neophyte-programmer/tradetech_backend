@@ -7,7 +7,7 @@ const router = express.Router();
 // /api/product
 
 // POST
-router.post('/create', authMiddleware, isAdmin, createProduct)
+router.post('/new', authMiddleware, isAdmin, createProduct)
 
 // GET
 router.get("/", getAllProducts)
