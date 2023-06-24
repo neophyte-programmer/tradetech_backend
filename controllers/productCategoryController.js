@@ -17,6 +17,7 @@ const createCategory = asyncHandler(async (req, res) => {
 
 const updateCategory = asyncHandler(async (req, res) => {
     const { id } = req.params
+    validateMongodbId(id)
     try {
         const updatedCategory = await ProductCategory.findByIdAndUpdate(id, req.body, { new: true })
         res.status(200).json({
@@ -30,6 +31,8 @@ const updateCategory = asyncHandler(async (req, res) => {
 
 const deleteCategory = asyncHandler(async (req, res) => {
     const { id } = req.params
+    validateMongodbId(id)
+
     try {
         const deletedCategory = await ProductCategory.findByIdAndDelete(id)
         res.status(200).json({
@@ -42,6 +45,8 @@ const deleteCategory = asyncHandler(async (req, res) => {
 
 const getSingleCategory = asyncHandler(async (req, res) => {
     const { id } = req.params
+    validateMongodbId(id)
+
     try {
         const singleCategory = await ProductCategory.findById(id)
         if (!singleCategory) throw new Error("Category not found")
