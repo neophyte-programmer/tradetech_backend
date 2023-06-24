@@ -125,7 +125,7 @@ const addToWishlist = asyncHandler(async (req, res) => {
         const user = await User.findById(_id)
         const isAlreadyAdded = user.wishlist.find((id) => id.toString() === productId)
 
-        
+
 
         if (isAlreadyAdded) {
             let updatedUser = await User.findByIdAndUpdate(_id,
@@ -155,7 +155,55 @@ const addToWishlist = asyncHandler(async (req, res) => {
 })
 
 // give rating to a product
-const giveRating = asyncHandler(async (req, res) => { })
+const giveRating = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    const { productId, star, comment } = req.body;
+    try {
+        const product = await Product.findById(productId)
+        let isAlreadyRated = product.ratings.find((userId) => userId.postedby.toString() === _id.toString())
+
+        if (isAlreadyRated) {
+            const updateRating = await Product.updateOne(
+                { ratings: { $elemMatch: isAlreadyRated } },
+                { $set: { "ratings.$.star": star, "ratings.$.comment": comment } },
+                { new: true }
+            )
+        } else {
+            const rateProduct = await Product.findByIdAndUpdate(productId, {
+                $push: {
+                    ratings: {
+                        star: star,
+                        comment: comment,
+                        postedby: _id
+                    }
+                }
+            }, {
+                new: true
+            })
+        }
+
+        const getAllRatings = await Product.findById(productId)
+        let totalRating = getAllRatings.ratings.length
+        let ratingSum = getAllRatings.ratings.map((item) => item.star).reduce((prev, curr) => prev + curr, 0)
+        
+        let actualRating = Math.round(ratingSum / totalRating)
+        let finalProduct = await Product.findByIdAndUpdate(productId,
+            { totalrating: actualRating },
+            { new: true }
+        )
+
+        res.status(200).json({
+            message: "Product rated successfully",
+            data: finalProduct
+        })
+
+
+    } catch (error) {
+        throw new Error(error)
+    }
+})
+
+
 
 
 
