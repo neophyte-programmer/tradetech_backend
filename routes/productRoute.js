@@ -18,6 +18,7 @@ router.delete("/drop/:id", authMiddleware, isAdmin, deleteProduct)
 
 
 // PUT
+router.put("/wishlist", authMiddleware, addToWishlist)
 router.put("/edit/:id", authMiddleware, isAdmin, updateProduct)
 
 module.exports = router;
