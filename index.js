@@ -16,6 +16,8 @@ const productRouter = require('./routes/productRoute')
 const blogRouter = require('./routes/blogRoute')
 const productCategoryRouter = require('./routes/productCategoryRoute')
 const blogCategoryRouter = require('./routes/blogCategoryRoute')
+const brandRouter = require('./routes/brandRoute')
+
 
 
 dbConnect() // Connecting to the database
@@ -32,6 +34,7 @@ app.use('/api/product', productRouter)
 app.use('/api/blog', blogRouter)
 app.use('/api/productCategory', productCategoryRouter)
 app.use('/api/blogCategory', blogCategoryRouter)
+app.use('/api/brand', brandRouter)
 
 
 // MIDDLEWARES - always after routes
