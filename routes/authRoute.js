@@ -14,6 +14,7 @@ const {
     generateForgotPasswordToken,
     resetPassword,
     loginAdmin,
+    getWishlist,
 
 } = require('../controllers/userController');
 const { authMiddleware, isAdmin } = require('../middlewares/authMiddleware');
@@ -32,6 +33,7 @@ router.post("/forgot-password-token", generateForgotPasswordToken)
 router.get('/all', getAllUsers)
 router.get('/refresh', handleRefreshToken)
 router.get('/logout', logout)
+router.get("/wishlist", authMiddleware, getWishlist);
 router.get("/:id", authMiddleware, isAdmin, getSingleUser)
 
 // DELETE
