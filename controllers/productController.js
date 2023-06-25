@@ -3,6 +3,9 @@ const User = require("../models/userModel");
 const slugify = require('slugify');
 
 const asyncHandler = require('express-async-handler');
+const cloudinaryUploadImg = require("../utils/cloudinary")
+const validateMongodbId = require("../utils/validateMongodbId");
+
 
 
 // create a new product
@@ -185,7 +188,7 @@ const giveRating = asyncHandler(async (req, res) => {
         const getAllRatings = await Product.findById(productId)
         let totalRating = getAllRatings.ratings.length
         let ratingSum = getAllRatings.ratings.map((item) => item.star).reduce((prev, curr) => prev + curr, 0)
-        
+
         let actualRating = Math.round(ratingSum / totalRating)
         let finalProduct = await Product.findByIdAndUpdate(productId,
             { totalrating: actualRating },
@@ -204,6 +207,33 @@ const giveRating = asyncHandler(async (req, res) => {
 })
 
 
+const uploadImages = asyncHandler(async (req, res) => {
+    const { id } = req.params // get product id from params
+    validateMongodbId(id)
+    try {
+        const uploader = (path) => cloudinaryUploadImg(path, "images")
+        const urls = []
+        const files = req.files
+
+        for (const file of files) {
+            const { path } = file
+            const newPath = await uploader(path)
+            urls.push(newPath)
+        }
+
+        const findProduct = await Product.findByIdAndUpdate(id, {
+            images: urls.map((file) => { return file })
+        }, { new: true })
+        res.status(200).json({
+            message: "Images added to product",
+            data: findProduct
+        })
+    } catch (error) {
+        throw new Error(error)
+    }
+
+})
+
 
 
 
@@ -214,5 +244,6 @@ module.exports = {
     getSingleProduct,
     getAllProducts,
     addToWishlist,
-    giveRating
+    giveRating,
+    uploadImages
 }

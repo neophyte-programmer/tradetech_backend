@@ -1,6 +1,16 @@
 const express = require('express');
-const { createProduct, updateProduct, deleteProduct, getSingleProduct, getAllProducts, addToWishlist, giveRating } = require('../controllers/productController');
+const {
+    createProduct,
+    updateProduct,
+    deleteProduct,
+    getSingleProduct,
+    getAllProducts,
+    addToWishlist,
+    giveRating,
+    uploadImages
+} = require('../controllers/productController');
 const { isAdmin, authMiddleware } = require('../middlewares/authMiddleware');
+const { uploadPhoto, resizeProductImg } = require('../middlewares/uploadImages');
 
 const router = express.Router();
 
@@ -18,6 +28,7 @@ router.delete("/drop/:id", authMiddleware, isAdmin, deleteProduct)
 
 
 // PUT
+router.put("/upload/:id", authMiddleware, isAdmin, uploadPhoto.array("images", 10), resizeProductImg, uploadImages)
 router.put("/wishlist", authMiddleware, addToWishlist)
 router.put("/rating", authMiddleware, giveRating)
 router.put("/edit/:id", authMiddleware, isAdmin, updateProduct)
