@@ -54,6 +54,41 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 })
 
+// Login admin
+const loginAdmin = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    // find the user with the email
+    const findAdmin = await User.findOne({ email: email })
+
+    if (findAdmin.role !== 'admin') {
+        throw new Error("You are not authorized to access this path")
+    }
+
+
+    if (findAdmin && await findAdmin.isPasswordMatched(password)) {
+        const refreshToken = await generateRefreshToken(findAdmin?.id)
+        const updateUser = await User.findByIdAndUpdate(findAdmin?.id, {
+            refreshToken: refreshToken
+        }, {
+            new: true
+        })
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            maxAge: 72 * 60 * 60 * 1000,
+        })
+        res.json({
+            _id: findAdmin._id,
+            firstname: findAdmin.firstname,
+            lastname: findAdmin.lastname,
+            email: findAdmin.email,
+            mobile: findAdmin.mobile,
+            token: generateToken(findAdmin._id)
+        })
+    } else {
+        throw new Error('Invalid email or password')
+    }
+})
+
 // Handle the refresh token
 const handleRefreshToken = asyncHandler(async (req, res) => {
     const cookie = req.cookies;
@@ -268,5 +303,5 @@ const resetPassword = asyncHandler(async (req, res) => {
 
 
 module.exports = {
-    createUser, loginUser, getAllUsers, getSingleUser, updateUser, deleteUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword, generateForgotPasswordToken, resetPassword
+    createUser, loginUser, getAllUsers, getSingleUser, updateUser, deleteUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword, generateForgotPasswordToken, resetPassword, loginAdmin
 }
