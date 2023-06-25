@@ -16,7 +16,7 @@ const createUser = asyncHandler(async (req, res) => {
     if (!findUser) {
         // create a new user
         const newUser = await User.create(req.body)
-        res.json({data: newUser})
+        res.json({ data: newUser })
     } else {
         // user already exists
         throw new Error('User already exists')
@@ -135,7 +135,7 @@ const logout = asyncHandler(async (req, res) => {
 const getAllUsers = asyncHandler(async (req, res) => {
     try {
         const getUsers = await User.find()
-        res.json({data: getUsers})
+        res.json({ data: getUsers })
     } catch (error) {
         throw new Error(error)
     }
@@ -148,7 +148,7 @@ const getSingleUser = asyncHandler(async (req, res) => {
 
     try {
         const singleUser = await User.findById(id)
-        res.json({data: singleUser})
+        res.json({ data: singleUser })
     } catch (error) {
         throw new Error(error)
     }
@@ -180,7 +180,7 @@ const updateUser = asyncHandler(async (req, res) => {
             email: req?.body?.email,
             mobile: req?.body?.mobile,
         }, { new: true })
-        res.json({data: updatedUser})
+        res.json({ data: updatedUser })
 
     } catch (error) {
         throw new Error(error)
@@ -277,7 +277,7 @@ const generateForgotPasswordToken = asyncHandler(async (req, res) => {
 
 
 // Reset your password
-const resetPassword = asyncHandler(async (req, res) => { 
+const resetPassword = asyncHandler(async (req, res) => {
     const { password } = req.body
     const { token } = req.params
 
@@ -285,7 +285,7 @@ const resetPassword = asyncHandler(async (req, res) => {
     // find user using the token
     const user = await User.findOne({
         passwordResetToken: hashedToken,
-        passwordResetExpires: { $gt: Date.now()}
+        passwordResetExpires: { $gt: Date.now() }
     })
 
     if (!user) throw new Error("Your token has expired. Please try again")
@@ -303,17 +303,148 @@ const resetPassword = asyncHandler(async (req, res) => {
 const getWishlist = asyncHandler(async (req, res) => {
     const { _id } = req.user;
     try {
-      const findUser = await User.findById(_id).populate("wishlist");
+        const findUser = await User.findById(_id).populate("wishlist");
         res.status(200).json({
-          data: findUser
-      });
+            data: findUser
+        });
     } catch (error) {
-      throw new Error(error);
+        throw new Error(error);
     }
-  });
+});
+
+const saveAddress = asyncHandler(async (req, res, next) => {
+    const { _id } = req.user;
+    validateMongodbId(_id)
+
+    try {
+        const updatedUser = await User.findByIdAndUpdate(_id, {
+            address: req?.body?.address,
+        }, { new: true })
+        res.json({
+            message: "Address saved successfully",
+            data: updatedUser
+        })
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+const userCart = asyncHandler(async (req, res) => {
+
+    try {
+
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+const getUserCart = asyncHandler(async (req, res) => {
+
+    try {
+
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+
+const emptyCart = asyncHandler(async (req, res) => {
+
+    try {
+
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+
+const applyCoupon = asyncHandler(async (req, res) => {
+
+    try {
+
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+
+const createOrder = asyncHandler(async (req, res) => {
+
+    try {
+
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+
+const getOrders = asyncHandler(async (req, res) => {
+
+    try {
+
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+
+const updateOrderStatus = asyncHandler(async (req, res) => {
+
+    try {
+
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+
+const getAllOrders = asyncHandler(async (req, res) => {
+
+    try {
+
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+
+const getOrderByUserId = asyncHandler(async (req, res) => {
+
+    try {
+
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+
 
 
 
 module.exports = {
-    createUser, loginUser, getAllUsers, getSingleUser, updateUser, deleteUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword, generateForgotPasswordToken, resetPassword, loginAdmin, getWishlist
+    createUser,
+    loginUser,
+    getAllUsers,
+    getSingleUser,
+    updateUser,
+    deleteUser,
+    blockUser,
+    unblockUser,
+    handleRefreshToken,
+    logout,
+    updatePassword,
+    generateForgotPasswordToken,
+    resetPassword,
+    loginAdmin,
+    getWishlist,
+    saveAddress,
+    userCart,
+    getUserCart,
+    emptyCart,
+    applyCoupon,
+    createOrder,
+    getOrders,
+    updateOrderStatus,
+    getAllOrders,
+    getOrderByUserId,
 }

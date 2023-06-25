@@ -15,7 +15,16 @@ const {
     resetPassword,
     loginAdmin,
     getWishlist,
-
+    saveAddress,
+    userCart,
+    getUserCart,
+    emptyCart,
+    applyCoupon,
+    createOrder,
+    getOrders,
+    updateOrderStatus,
+    getAllOrders,
+    getOrderByUserId,
 } = require('../controllers/userController');
 const { authMiddleware, isAdmin } = require('../middlewares/authMiddleware');
 
@@ -42,6 +51,7 @@ router.delete("/:id", deleteUser)
 
 // PUT
 router.put("/password", authMiddleware, updatePassword)
+router.put("/save-address", authMiddleware, saveAddress)
 router.put("/edit", authMiddleware, updateUser)
 router.put("/block/:id", authMiddleware, isAdmin, blockUser)
 router.put("/unblock/:id", authMiddleware, isAdmin, unblockUser)
