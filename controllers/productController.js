@@ -1,6 +1,7 @@
 const Product = require("../models/productModel");
 const User = require("../models/userModel");
 const slugify = require('slugify');
+const fs = require("fs")
 
 const asyncHandler = require('express-async-handler');
 const cloudinaryUploadImg = require("../utils/cloudinary")
@@ -219,6 +220,7 @@ const uploadImages = asyncHandler(async (req, res) => {
             const { path } = file
             const newPath = await uploader(path)
             urls.push(newPath)
+            fs.unlinkSync(path)
         }
 
         const findProduct = await Product.findByIdAndUpdate(id, {

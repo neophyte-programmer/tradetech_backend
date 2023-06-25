@@ -38,10 +38,6 @@ var blogSchema = new mongoose.Schema({
             ref: "User",
         },
     ],
-    // image: {
-    //     type: String,
-    //     default: "https://sendgrid.com/wp-content/uploads/2014/03/iStock-520581198-2340x1000.jpg"
-    // },
     author: {
         type: String,
         default: "Admin",
