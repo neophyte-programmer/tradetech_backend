@@ -16,7 +16,7 @@ const {
     loginAdmin,
     getWishlist,
     saveAddress,
-    userCart,
+    createUserCart,
     getUserCart,
     emptyCart,
     applyCoupon,
@@ -37,6 +37,7 @@ router.post('/register', createUser)
 router.post('/login', loginUser)
 router.post('/admin-login', loginAdmin)
 router.post("/forgot-password-token", generateForgotPasswordToken)
+router.post("/cart", authMiddleware, createUserCart)
 
 // GET
 router.get('/all', getAllUsers)

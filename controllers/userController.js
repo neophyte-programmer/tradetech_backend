@@ -1,4 +1,6 @@
 const User = require('../models/userModel');
+const Product = require('../models/productModel');
+const Cart = require('../models/cartModel');
 const jwt = require("jsonwebtoken");
 const crypto = require('crypto');
 
@@ -7,6 +9,7 @@ const asyncHandler = require('express-async-handler');
 const validateMongodbId = require('../utils/validateMongodbId');
 const { generateRefreshToken } = require('../config/refreshToken');
 const sendEmail = require('./emailController');
+const { log } = require('console');
 
 // Register user
 const createUser = asyncHandler(async (req, res) => {
@@ -329,10 +332,48 @@ const saveAddress = asyncHandler(async (req, res, next) => {
     }
 });
 
-const userCart = asyncHandler(async (req, res) => {
-
+const createUserCart = asyncHandler(async (req, res) => {
+    const { cart } = req.body
+    const { _id } = req.user
+    validateMongodbId(_id)
     try {
+        let products = []
+        const user = await User.findById(_id)
+        // check if the user has products in cart
+        const cartAlreadyExists = await Cart.findOne({ orderby: user._id })
 
+        if (cartAlreadyExists) {
+            cartAlreadyExists.remove()
+        }
+
+        for (let i = 0; i < cart.length; i++) {
+            let object = {}
+            object.product = cart[i]._id
+            object.count = cart[i].count
+            object.color = cart[i].color
+
+            // Calculate price for each cart product
+            let getPrice = await Product.findById(cart[i]._id).select("price").exec()
+            object.price = getPrice.price
+            products.push(object)
+        }
+        
+        // find the total price of items in cart
+        let cartTotal = 0
+        for (let i = 0; i < products.length; i++) {
+            cartTotal = cartTotal + products[i].price * products[i].count
+        }
+
+        let newCart = await new Cart({
+            products,
+            cartTotal,
+            orderby: user?._id,
+        }).save();
+        
+        res.status(200).json({
+            message: "Cart created successfully",
+            data: newCart
+        })
     } catch (error) {
         throw new Error(error);
     }
@@ -438,7 +479,7 @@ module.exports = {
     loginAdmin,
     getWishlist,
     saveAddress,
-    userCart,
+    createUserCart,
     getUserCart,
     emptyCart,
     applyCoupon,
