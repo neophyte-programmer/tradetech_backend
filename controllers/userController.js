@@ -520,9 +520,21 @@ const getOrders = asyncHandler(async (req, res) => {
 
 
 const updateOrderStatus = asyncHandler(async (req, res) => {
-
+    const { status } = req.body
+    const { id } = req.params
+    validateMongodbId(id)
     try {
-
+        const findOrder = await Order.findByIdAndUpdate(id, {
+            orderStatus: status,
+            paymentIntent: {
+                status: status
+            }
+        }, { new: true })
+        
+        res.status(200).json({
+            message: "Order updated successfully",
+            data: findOrder
+        })
     } catch (error) {
         throw new Error(error);
     }
