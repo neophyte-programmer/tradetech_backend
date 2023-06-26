@@ -17,6 +17,7 @@ const blogRouter = require('./routes/blogRoute')
 const productCategoryRouter = require('./routes/productCategoryRoute')
 const blogCategoryRouter = require('./routes/blogCategoryRoute')
 const brandRouter = require('./routes/brandRoute')
+const colorRouter = require('./routes/colorRoute')
 const couponRouter = require('./routes/couponRoute')
 
 
@@ -36,6 +37,7 @@ app.use('/api/blog', blogRouter)
 app.use('/api/productCategory', productCategoryRouter)
 app.use('/api/blogCategory', blogCategoryRouter)
 app.use('/api/brand', brandRouter)
+app.use('/api/color', colorRouter)
 app.use('/api/coupon', couponRouter)
 
 
