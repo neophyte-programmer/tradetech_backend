@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
 const Product = require('../models/productModel');
 const Cart = require('../models/cartModel');
+const Coupon = require('../models/couponModel');
 const jwt = require("jsonwebtoken");
 const crypto = require('crypto');
 
@@ -400,7 +401,7 @@ const emptyCart = asyncHandler(async (req, res) => {
     validateMongodbId(_id);
     try {
         const user = await User.findOne({ _id })
-        const cart = await Cart.findOneAndRemove({orderby: user._id})
+        const cart = await Cart.findOneAndRemove({ orderby: user._id })
         res.status(200).json({
             message: "Your cart has been emptied",
             data: user
@@ -412,9 +413,37 @@ const emptyCart = asyncHandler(async (req, res) => {
 
 
 const applyCoupon = asyncHandler(async (req, res) => {
-
+    const { coupon } = req.body;
+    const { _id } = req.user;
+    validateMongodbId(_id);
     try {
+        const validCoupon = await Coupon.findOne({ name: coupon })
 
+        if (validCoupon === null) {
+            throw new Error("Invalid Coupon!")
+        }
+
+        const user = await User.findOne({ _id })
+        let { products, cartTotal } = await Cart.findOne({ orderby: user._id }).populate(
+            "products.product"
+        );
+
+        if (!products || !cartTotal || products === null || cartTotal === null) {
+            throw new Error("There is nothing in your cart!")
+        }
+
+        let totalAfterDiscount = (cartTotal - (cartTotal * validCoupon.discount) / 100).toFixed(2);
+        
+        await Cart.findOneAndUpdate(
+            { orderby: user._id },
+            { totalAfterDiscount },
+            { new: true }
+        );
+        
+        res.status(200).json({
+            message: "Discount Applied",
+            data: totalAfterDiscount
+        })
     } catch (error) {
         throw new Error(error);
     }
