@@ -7,7 +7,7 @@ const router = express.Router();
 // /api/color
 
 // POST
-router.post("/new", authMiddleware, isAdmin, createEnquiry)
+router.post("/new", createEnquiry)
 
 // GET
 router.get("/all", getAllEnquiry)
