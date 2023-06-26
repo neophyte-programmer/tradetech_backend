@@ -464,9 +464,9 @@ const createOrder = asyncHandler(async (req, res) => {
         let finalAmount = 0
 
         if (couponApplied && userCart.totalAfterDiscount) {
-            finalAmount = userCart.totalAfterDiscount * 100
+            finalAmount = userCart.totalAfterDiscount
         } else {
-            finalAmount = userCart.cartTotal * 100
+            finalAmount = userCart.cartTotal
         }
 
         // initiate order
@@ -475,7 +475,7 @@ const createOrder = asyncHandler(async (req, res) => {
             paymentIntent: {
                 id: uniqid(),
                 method: "COD",
-                amount: finalAmount.toFixed(2),
+                amount: Number(finalAmount.toFixed(2)),
                 status: "Cash on Delivery",
                 created: Date.now(),
                 currency: "ghc"
@@ -487,14 +487,14 @@ const createOrder = asyncHandler(async (req, res) => {
         // adjust stock levels accordingly
         let update = userCart.products.map((item) => {
             return {
-              updateOne: {
-                filter: { _id: item.product._id },
-                update: { $inc: { quantity: -item.count, sold: +item.count } },
-              },
+                updateOne: {
+                    filter: { _id: item.product._id },
+                    update: { $inc: { quantity: -item.count, sold: +item.count } },
+                },
             };
-          });
-          const updated = await Product.bulkWrite(update, {});
-          res.json({ message: "success" });
+        });
+        const updated = await Product.bulkWrite(update, {});
+        res.json({ message: "success" });
 
     } catch (error) {
         throw new Error(error);
@@ -503,9 +503,16 @@ const createOrder = asyncHandler(async (req, res) => {
 
 
 const getOrders = asyncHandler(async (req, res) => {
-
+    const { _id } = req.user;
+    validateMongodbId(_id);
     try {
-
+        const userOrders = await Order.findOne({ orderby: _id })
+            .populate("products.product")
+            .populate("orderby")
+            .exec();
+        res.status(200).json({
+            data: userOrders
+        })
     } catch (error) {
         throw new Error(error);
     }
@@ -523,7 +530,13 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
 
 
 const getAllOrders = asyncHandler(async (req, res) => {
-
+    const allOrders = await Order.find()
+      .populate("products.product")
+      .populate("orderby")
+      .exec();
+    res.json({
+        data: allOrders
+    });
     try {
 
     } catch (error) {

@@ -39,7 +39,7 @@ router.post('/admin-login', loginAdmin)
 router.post("/forgot-password-token", generateForgotPasswordToken)
 router.post("/cart/create", authMiddleware, createUserCart)
 router.post("/cart/apply-coupon", authMiddleware, applyCoupon)
-router.post("/order/cash/create", authMiddleware, createOrder)
+router.post("/orders/cash/create", authMiddleware, createOrder)
 
 // GET
 router.get('/all', getAllUsers)
@@ -47,6 +47,9 @@ router.get('/refresh', handleRefreshToken)
 router.get('/logout', logout)
 router.get("/wishlist", authMiddleware, getWishlist);
 router.get("/cart", authMiddleware, getUserCart);
+router.get("/orders", authMiddleware, getOrders)
+router.get("/orders/all", authMiddleware, isAdmin, getAllOrders)
+router.get("/orders/:id", authMiddleware, isAdmin, getOrderByUserId)
 router.get("/:id", authMiddleware, isAdmin, getSingleUser)
 
 // DELETE
@@ -58,6 +61,7 @@ router.delete("/:id", deleteUser)
 router.put("/password", authMiddleware, updatePassword)
 router.put("/save-address", authMiddleware, saveAddress)
 router.put("/edit", authMiddleware, updateUser)
+router.put("/orders/edit/:id", authMiddleware, isAdmin, updateOrderStatus);
 router.put("/block/:id", authMiddleware, isAdmin, blockUser)
 router.put("/unblock/:id", authMiddleware, isAdmin, unblockUser)
 router.put("/reset-password/:token", resetPassword)
