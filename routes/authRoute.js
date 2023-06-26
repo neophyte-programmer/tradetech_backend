@@ -39,6 +39,7 @@ router.post('/admin-login', loginAdmin)
 router.post("/forgot-password-token", generateForgotPasswordToken)
 router.post("/cart/create", authMiddleware, createUserCart)
 router.post("/cart/apply-coupon", authMiddleware, applyCoupon)
+router.post("/order/cash/create", authMiddleware, createOrder)
 
 // GET
 router.get('/all', getAllUsers)

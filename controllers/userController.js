@@ -2,6 +2,7 @@ const User = require('../models/userModel');
 const Product = require('../models/productModel');
 const Cart = require('../models/cartModel');
 const Coupon = require('../models/couponModel');
+const Order = require('../models/orderModel');
 const jwt = require("jsonwebtoken");
 const crypto = require('crypto');
 
@@ -10,7 +11,7 @@ const asyncHandler = require('express-async-handler');
 const validateMongodbId = require('../utils/validateMongodbId');
 const { generateRefreshToken } = require('../config/refreshToken');
 const sendEmail = require('./emailController');
-const { log } = require('console');
+const uniqid = require("uniqid")
 
 // Register user
 const createUser = asyncHandler(async (req, res) => {
@@ -433,13 +434,13 @@ const applyCoupon = asyncHandler(async (req, res) => {
         }
 
         let totalAfterDiscount = (cartTotal - (cartTotal * validCoupon.discount) / 100).toFixed(2);
-        
+
         await Cart.findOneAndUpdate(
             { orderby: user._id },
             { totalAfterDiscount },
             { new: true }
         );
-        
+
         res.status(200).json({
             message: "Discount Applied",
             data: totalAfterDiscount
@@ -451,8 +452,49 @@ const applyCoupon = asyncHandler(async (req, res) => {
 
 
 const createOrder = asyncHandler(async (req, res) => {
-
+    const { COD, couponApplied } = req.body
+    const { _id } = req.user;
+    validateMongodbId(_id);
     try {
+        if (!COD) {
+            throw new Error("Cash order failed to create!")
+        }
+        const user = await User.findById(_id)
+        let userCart = await Cart.findOne({ orderby: user._id })
+        let finalAmount = 0
+
+        if (couponApplied && userCart.totalAfterDiscount) {
+            finalAmount = userCart.totalAfterDiscount * 100
+        } else {
+            finalAmount = userCart.cartTotal * 100
+        }
+
+        // initiate order
+        let newOrder = await new Order({
+            products: userCart.products,
+            paymentIntent: {
+                id: uniqid(),
+                method: "COD",
+                amount: finalAmount.toFixed(2),
+                status: "Cash on Delivery",
+                created: Date.now(),
+                currency: "ghc"
+            },
+            orderby: user._id,
+            orderStatus: "Cash on Delivery"
+        }).save()
+
+        // adjust stock levels accordingly
+        let update = userCart.products.map((item) => {
+            return {
+              updateOne: {
+                filter: { _id: item.product._id },
+                update: { $inc: { quantity: -item.count, sold: +item.count } },
+              },
+            };
+          });
+          const updated = await Product.bulkWrite(update, {});
+          res.json({ message: "success" });
 
     } catch (error) {
         throw new Error(error);
