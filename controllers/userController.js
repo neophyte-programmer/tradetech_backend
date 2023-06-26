@@ -357,7 +357,7 @@ const createUserCart = asyncHandler(async (req, res) => {
             object.price = getPrice.price
             products.push(object)
         }
-        
+
         // find the total price of items in cart
         let cartTotal = 0
         for (let i = 0; i < products.length; i++) {
@@ -369,7 +369,7 @@ const createUserCart = asyncHandler(async (req, res) => {
             cartTotal,
             orderby: user?._id,
         }).save();
-        
+
         res.status(200).json({
             message: "Cart created successfully",
             data: newCart
@@ -396,9 +396,15 @@ const getUserCart = asyncHandler(async (req, res) => {
 
 
 const emptyCart = asyncHandler(async (req, res) => {
-
+    const { _id } = req.user;
+    validateMongodbId(_id);
     try {
-
+        const user = await User.findOne({ _id })
+        const cart = await Cart.findOneAndRemove({orderby: user._id})
+        res.status(200).json({
+            message: "Your cart has been emptied",
+            data: user
+        })
     } catch (error) {
         throw new Error(error);
     }

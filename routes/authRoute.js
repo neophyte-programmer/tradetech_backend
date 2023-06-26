@@ -37,17 +37,18 @@ router.post('/register', createUser)
 router.post('/login', loginUser)
 router.post('/admin-login', loginAdmin)
 router.post("/forgot-password-token", generateForgotPasswordToken)
-router.post("/cart", authMiddleware, createUserCart)
+router.post("/create-cart", authMiddleware, createUserCart)
 
 // GET
 router.get('/all', getAllUsers)
 router.get('/refresh', handleRefreshToken)
 router.get('/logout', logout)
 router.get("/wishlist", authMiddleware, getWishlist);
-router.get("/cart", authMiddleware, getUserCart);
+router.get("/get-cart", authMiddleware, getUserCart);
 router.get("/:id", authMiddleware, isAdmin, getSingleUser)
 
 // DELETE
+router.delete("/empty-cart", authMiddleware, emptyCart);
 router.delete("/:id", deleteUser)
 
 
