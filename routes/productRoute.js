@@ -7,7 +7,8 @@ const {
     getAllProducts,
     addToWishlist,
     giveRating,
-    uploadImages
+    uploadImages,
+    deleteImages
 } = require('../controllers/productController');
 const { isAdmin, authMiddleware } = require('../middlewares/authMiddleware');
 const { uploadPhoto, resizeProductImg } = require('../middlewares/uploadImages');
@@ -25,10 +26,11 @@ router.get("/:id", getSingleProduct)
 
 // DELETE
 router.delete("/drop/:id", authMiddleware, isAdmin, deleteProduct)
+router.delete("/delete-img/:id", authMiddleware, isAdmin, deleteImages)
 
 
 // PUT
-router.put("/upload/:id", authMiddleware, isAdmin, uploadPhoto.array("images", 10), resizeProductImg, uploadImages)
+router.put("/upload/", authMiddleware, isAdmin, uploadPhoto.array("images", 10), resizeProductImg, uploadImages)
 router.put("/wishlist", authMiddleware, addToWishlist)
 router.put("/rating", authMiddleware, giveRating)
 router.put("/edit/:id", authMiddleware, isAdmin, updateProduct)
