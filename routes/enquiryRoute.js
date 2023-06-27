@@ -4,7 +4,7 @@ const { isAdmin, authMiddleware } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
-// /api/color
+// /api/enquiry
 
 // POST
 router.post("/new", createEnquiry)
