@@ -54,7 +54,7 @@ Please refer to the API documentation for a detailed list of available endpoints
 
 To get started with using the TradeTech E-commerce API, follow these steps:
 
-1. Clone the repository: `git clone <repository-url>`
+1. Clone the repository: `git clone https://github.com/neophyte-programmer/tradetech_backend/`
 2. Install dependencies: `npm install`
 3. Configure environment variables by creating an `.env` file.
 4. Run the API: `npm run server`
@@ -67,4 +67,4 @@ Make sure you have a MongoDB database set up and accessible.
 
 ## Contributing
 
-This project is not open-source, and contributions are not accepted at this time.
+This project is not open-source (it is for a semester project), and contributions are not accepted at this time.
