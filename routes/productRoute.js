@@ -30,7 +30,7 @@ router.delete("/delete-img/:id", authMiddleware, isAdmin, deleteImages)
 
 
 // PUT
-router.put("/upload/", authMiddleware, isAdmin, uploadPhoto.array("images", 10), resizeProductImg, uploadImages)
+router.put("/upload/:id", authMiddleware, isAdmin, uploadPhoto.array("images", 10), resizeProductImg, uploadImages)
 router.put("/wishlist", authMiddleware, addToWishlist)
 router.put("/rating", authMiddleware, giveRating)
 router.put("/edit/:id", authMiddleware, isAdmin, updateProduct)
