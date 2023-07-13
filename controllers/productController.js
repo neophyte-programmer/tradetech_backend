@@ -210,6 +210,8 @@ const giveRating = asyncHandler(async (req, res) => {
 
 const uploadImages = asyncHandler(async (req, res) => {
 
+    const { id } = req.params // get product id from params
+    validateMongodbId(id)
     try {
         const uploader = (path) => cloudinaryUploadImg(path, "images")
         const urls = []
@@ -219,17 +221,19 @@ const uploadImages = asyncHandler(async (req, res) => {
             const { path } = file
             const newPath = await uploader(path)
             urls.push(newPath)
-            fs.unlinkSync(path)
         }
-        const images = urls.map((file) => { return file })
 
+        const findProduct = await Product.findByIdAndUpdate(id, {
+            images: urls.map((file) => { return file })
+        }, { new: true })
         res.status(200).json({
             message: "Images added to product",
-            data: images
+            data: findProduct
         })
     } catch (error) {
         throw new Error(error)
     }
+
 
 })
 const deleteImages = asyncHandler(async (req, res) => {
