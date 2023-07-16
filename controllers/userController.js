@@ -506,7 +506,7 @@ const getOrders = asyncHandler(async (req, res) => {
     const { _id } = req.user;
     validateMongodbId(_id);
     try {
-        const userOrders = await Order.findOne({ orderby: _id })
+        const userOrders = await Order.find({ orderby: _id })
             .populate("products.product")
             .populate("orderby")
             .exec();
