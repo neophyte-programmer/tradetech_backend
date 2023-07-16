@@ -526,10 +526,6 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     try {
         const findOrder = await Order.findByIdAndUpdate(id, {
             orderStatus: status,
-            paymentIntent: {
-                ...paymentIntent,
-                status: status
-            }
         }, { new: true })
         
         res.status(200).json({
