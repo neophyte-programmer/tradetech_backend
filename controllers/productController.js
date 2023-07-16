@@ -64,7 +64,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 const getSingleProduct = asyncHandler(async (req, res) => {
     const { id } = req.params;
     try {
-        const findProduct = await Product.findById(id)
+        const findProduct = await Product.findById(id).populate("ratings.postedby", "firstname lastname")
         res.json(findProduct)
     } catch (error) {
         throw new Error(error)
